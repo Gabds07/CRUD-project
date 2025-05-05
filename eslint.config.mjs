@@ -9,7 +9,7 @@ export default defineConfig([
   {
     rules: {
       "semi": ["error", "always"],
-      "no-undef": false,
+      "no-undef": "off",
     },
   },
 ]);
