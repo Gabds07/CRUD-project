@@ -10,6 +10,7 @@ app.use(express.json());
 app.get('/user', UserController.getUsersData);
 app.get('/user/:_id', UserController.getUsersById);
 app.post('/user', UserController.postData);
+app.put('/user/:_id', UserController.editData);
 
 mongoose.connect(process.env.MONGODB_CONNECTION).then(() => {
   console.log('Connected to mongodb');

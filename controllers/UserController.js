@@ -39,7 +39,24 @@ module.exports = {
     } catch (err) {
       console.log(err);
       return res.status(501).json({ error: 'Error by trying to create a new user.' });
+    }
+  },
 
+  async editData(req, res) {
+    try {
+      const { _id } = req.params;
+      const { name, email } = req.body;
+      let editedUser = { name, email };
+
+      if (editedUser.name.length < 3 || editedUser.name.length > 20) return res.status(400).json({ error: 'The name must have between 3 and 20 caractheres' });
+      if (!validator.validate(editedUser.email)) return res.status(400).json({ error: 'E-mail is invalid.' });
+
+      editedUser = await User.findByIdAndUpdate(_id, { name, email });
+
+      return res.status(201).json(editedUser);
+    } catch (err) {
+      console.log(err);
+      return res.status(501).json({ error: 'Error by trying to edit/find this user.' });
     }
   }
 };
