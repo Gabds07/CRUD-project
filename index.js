@@ -1,20 +1,38 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const User = require('./models/User.js');
+
 require('dotenv').config();
 
 const app = express();
 app.use(express.json());
 
-mongoose.connect(process.env.MONGODB_CONNECTION).then(() => {
-  console.log('Connected to mongodb');
-}).catch(e => {
-  console.log('Error by trying to connect to mongodb', e);
+
+async function connectation() {
+  await mongoose.connect(process.env.MONGODB_CONNECTION).then(() => {
+    console.log('Connected to mongodb');
+  }).catch(e => {
+    console.log('Error by trying to connect to mongodb', e);
+  });
+}
+
+app.post('/user', async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    const newUser = await User.create({ name, email });
+    res.status(201).json(newUser);
+  } catch (err) {
+    res.status(500).json({ error: 'Error by trying to create a new user.' });
+  }
 });
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send({
+    "status": "Status ON",
+  });
 });
 
 app.listen(3000, () => {
   console.log('Listening on: http://localhost:3000');
+  connectation();
 });
