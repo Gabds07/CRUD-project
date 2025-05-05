@@ -20,10 +20,23 @@ app.post('/user', async (req, res) => {
   try {
     const { name, email } = req.body;
     const newUser = await User.create({ name, email });
+
     res.status(201).json(newUser);
   } catch (err) {
-    res.status(500).json({ error: 'Error by trying to create a new user.' });
+    res.status(501).json({ error: 'Error by trying to create a new user.' });
   }
+});
+
+app.get('/user', async (req, res) => {
+  const getUsers = await User.find();
+
+  if (getUsers.length > 0) {
+    res.json(getUsers);
+  }
+
+  if (getUsers.length === 0) return res.status(501).json({
+    'error': 'Error: no registered user was found.'
+  });
 });
 
 app.get('/', (req, res) => {
