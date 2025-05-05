@@ -2,29 +2,48 @@ const User = require('../models/User.js');
 const validator = require('email-validator');
 
 module.exports = {
-  async usersVerifier(req, res) {
-    try {
-      const getUsers = await User.find();
+  getUsersData(req, res) {
+    async function usersVerifier() {
+      try {
+        const getUsers = await User.find();
 
-      if (getUsers.length > 0) return res.status(201).json(getUsers);
-      if (getUsers.length === 0) return res.status(404).json({ error: 'No users found.' });
+        if (getUsers.length > 0) return res.status(201).json(getUsers);
+        if (getUsers.length === 0) return res.status(404).json({ error: 'No users found.' });
+      } catch {
+        res.status(501).json({ error: 'Error by trying to find users.' });
+      }
+    }
+    usersVerifier();
+  },
+
+  async getUsersById(req, res) {
+    try {
+      const { _id } = req.params;
+      const getUserById = await User.findById(_id);
+
+      res.status(201).json(getUserById);
     } catch {
-      res.status(501).json({ error: 'Error by trying to find users.' });
+      res.status(501).json({ error: 'Error by trying to find user by Id.' });
     }
   },
 
-  async userDataverifier(req, res) {
-    try {
-      const { name, email } = req.body;
-      let newUser = { name, email };
+  postData(req, res) {
+    async function userDataVerifier() {
+      try {
+        const { name, email } = req.body;
+        let newUser = { name, email };
 
-      if (validator.validate(newUser.email)) {
-        newUser = await User.create({ name, email });
-        return res.status(201).json(newUser);
+        if (newUser.name.length < 3 || newUser.name.length > 20) return res.status(404).json({ error: 'The name must have between 3 and 20 caractheres' });
+        if (!validator.validate(newUser.email)) return res.status(404).json({ error: 'E-mail is invalid.' });
+
+        if (validator.validate(newUser.email) && newUser.name.length >= 3 || newUser.name.length <= 20) {
+          newUser = await User.create({ name, email });
+          return res.status(201).json(newUser);
+        }
+      } catch {
+        return res.status(501).json({ error: 'Error by trying to create a new user.' });
       }
-      if (!validator.validate(newUser.email)) res.status(404).json({ error: 'E-mail is invalid.' });
-    } catch {
-      res.status(501).json({ error: 'Error by trying to create a new user.' });
     }
+    userDataVerifier();
   }
 };

@@ -7,8 +7,9 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 
-app.post('/user', UserController.userDataverifier);
-app.get('/user', UserController.usersVerifier);
+app.get('/user', UserController.getUsersData);
+app.get('/user/:_id', UserController.getUsersById);
+app.post('/user', UserController.postData);
 
 mongoose.connect(process.env.MONGODB_CONNECTION).then(() => {
   console.log('Connected to mongodb');
