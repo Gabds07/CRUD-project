@@ -30,13 +30,9 @@ app.post('/user', async (req, res) => {
 app.get('/user', async (req, res) => {
   const getUsers = await User.find();
 
-  if (getUsers.length > 0) {
-    res.json(getUsers);
-  }
+  if (getUsers.length > 0) res.json(getUsers);
 
-  if (getUsers.length === 0) return res.status(501).json({
-    'error': 'Error: no registered user was found.'
-  });
+  if (getUsers.length === 0) return res.status(501).json({ error: 'Error: no registered user was found.' });
 });
 
 app.get('/', (req, res) => {
